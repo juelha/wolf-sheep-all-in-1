@@ -4,12 +4,21 @@ using UnityEngine;
 using Unity.Mathematics;
 using System.Linq;
 
+// for casting parent class to child class:
+using System.Reflection;
+//using AutoMapper;
+
+
+
 public class Tiling : MonoBehaviour
 {
     public static Tiling TilingInstance;
     private const int tileYMultiplier = 1000;
     private const int tileSize = 5;
     [SerializeField] private GameObject prefab;
+
+    // public List<Boid> boidList;
+    // public Boid boid;
 
     private Wolf wolf;
     private Sheep sheep;
@@ -39,6 +48,32 @@ public class Tiling : MonoBehaviour
         TilingInstance = this;
     }
 
+
+
+    public List<Boid> SpawnBoids(GameObject prefab, int percent)
+    {
+       // percent = 10;
+        
+        var radius = 5;
+        List<Boid> boidsTemp = new List<Boid>();
+
+        var number = 5;
+        for (int i = 0; i < number; i++)
+        {
+
+            Vector3 pos = this.transform.position + UnityEngine.Random.insideUnitSphere * radius;
+            Quaternion rot = UnityEngine.Random.rotation;
+
+            Boid newBoid = Instantiate(prefab, pos, rot).GetComponent<Boid>();
+            newBoid.GetComponent<Renderer>().material.SetColor("_Color", Color.white);
+            boidsTemp.Add(newBoid);
+        }
+        Debug.Log(boidsTemp);
+
+        return boidsTemp;
+
+    }
+
     // Start is called before the first frame update
     void Start()
     {
@@ -46,7 +81,17 @@ public class Tiling : MonoBehaviour
         sheep = Sheep.Instance;
         grass = GrassGrowthAgent.Instance;
 
+        //  boid = new Sheep();
+        // boidList = new List<Sheep>();
+        //List<Boid> boidTemp = Spawn(prefab, 60);
+        // var sheepL = (Spawn(prefab, 60))
+        //  sheep.SetSheepList(Spawn(prefab,60));
 
+       // var boids = SpawnBoids(prefab, 60);
+
+       // var sheepList = Converter.ConvertToSheep(boids);
+
+        sheep.SetSheepList(Converter.ConvertToSheep(SpawnBoids(prefab, 60)));
 
 
     }
@@ -62,8 +107,8 @@ public class Tiling : MonoBehaviour
     // Update is called Aonce per frame
     void Update()
     {
-        wolf.Spawn(40);
-        sheep.Spawn(60);
+        // wolf.Spawn(40);
+        // sheep.Spawn(60);
         /*
 
         // debug stuff
@@ -116,5 +161,52 @@ public class Tiling : MonoBehaviour
         */
 
 
+    }
+}
+
+
+
+public class Converter
+{
+    /// <summary>
+    ///     Converts a list of Boids (parentclass) into a List of specified type <childrenclass>
+    /// </summary>
+
+    public static List<Sheep> ConvertToSheep(List<Boid> boids)
+    {
+        List<Sheep> sheepTemp = new List<Sheep>();
+
+        foreach (var boid in boids)
+        {
+            Debug.Log("test");
+
+            //Sheep sheep = boid.AddComponent<Sheep>();
+            // Getting properties of parent class
+            PropertyInfo[] properties = typeof(Boid).GetProperties();
+            
+            // Copy all properties to parent class
+            foreach (PropertyInfo pi in properties)
+            {
+                if (pi.CanWrite)
+                    pi.SetValue(sheep, pi.GetValue(boid));
+               // pi.SetValue(sheep, pi.GetValue(boid, null), null);
+            }
+            sheepTemp.Add(sheep);
+        }
+
+        return sheepTemp;
+
+        /*
+        var sheepList = new List<Sheep>();
+        AutoMapper.Mapper.CreateMap<Boid, Sheep>(); // Declare that we want some automagic to happen
+        foreach (var boid in boids)
+        {
+            var sheep = AutoMapper.Mapper.Map<Sheep>(boid);
+            // At this point, the car-specific properties (Color and SteeringColumnStyle) are null, because there are no properties in the Vehicle object to map from.
+            // However, car's NumWheels and HasMotor properties which exist due to inheritance, are populated by AutoMapper.
+            sheepList.Add(sheep);
+        }
+        return sheepList;
+        */
     }
 }
