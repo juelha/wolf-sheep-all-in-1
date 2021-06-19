@@ -163,6 +163,12 @@ public class Boid : MonoBehaviour
         {
             velocity = velocity.normalized * maxVelocity;
         }
+
+        // dont move along z axis
+        Vector3 pos = this.transform.position;
+        pos.z = 0;
+        this.transform.position = pos;
+
         this.transform.position += velocity * Time.deltaTime; // move 10 units every sec
         this.transform.up = velocity;
         //this.transform.rotation = Quaternion.LookRotation(velocity); // look in direction its going 

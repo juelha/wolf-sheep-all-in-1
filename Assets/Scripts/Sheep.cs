@@ -56,8 +56,17 @@ public class Sheep : Boid
 
     private void EatGrass(GrassGrowthAgent grass)
     {
-        Energy += SheepGainFromFood;
-        grass.Die();
+      //  if(this.GetTile() is Key in grassdict then)
+        foreach(var grassobj in grass.GetGrassList())
+        {
+            if (this.transform.position.x == grassobj.transform.position.x)
+            {
+                Energy += SheepGainFromFood;
+                grass.Die();
+            }
+                
+        }
+        
     }
 
     private void EnergyLoss()
@@ -73,6 +82,7 @@ public class Sheep : Boid
 
     public void Die()
     {
+        
       //  _grassland.SheepEnvironment.Remove(this);
       //  UnregisterHandle.Invoke(_grassland, this);
     }
@@ -104,7 +114,7 @@ public class Sheep : Boid
     {
         //Spawn(60);
         //velocity = this.transform.forward * maxVelocity;
-        Energy = Energy / 2;
+        Energy /= 2;
 
     }
 

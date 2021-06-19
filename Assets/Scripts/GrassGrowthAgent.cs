@@ -6,6 +6,9 @@ public class GrassGrowthAgent : MonoBehaviour
 {
     //public static GrasslandLayer Grassland;
     public static GrassGrowthAgent Instance;
+    public List<GrassGrowthAgent> grassList;
+    public List<GrassGrowthAgent> GetGrassList() { return grassList; }
+    public void SetGrassList(List<GrassGrowthAgent> grassTemp) { grassList = grassTemp; }
 
     public int GrassRegrowthPerStep { get; set; }
 
@@ -23,6 +26,7 @@ public class GrassGrowthAgent : MonoBehaviour
 
     public void Die()
     {
+        Destroy(GetComponent<GameObject>());
         //  _grassland.SheepEnvironment.Remove(this);
         //  UnregisterHandle.Invoke(_grassland, this);
     }

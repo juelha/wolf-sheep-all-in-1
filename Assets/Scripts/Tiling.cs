@@ -121,8 +121,9 @@ public class Tiling : MonoBehaviour
         var sheep = SpawnSheep(prefab, 60);
         // var sheepList = Converter.ConvertToSheep(boids);
         sheepInst.SetSheepList(sheep);
-        Grow(prefabgrass);
 
+        var grass = Grow(prefabgrass);
+        grassInst.SetGrassList(grass);
         //  sheep.SetSheepList(Converter.ConvertToSheep(SpawnBoids(prefab, 60)));
 
 
@@ -135,8 +136,56 @@ public class Tiling : MonoBehaviour
         return tileDict[tileKey].Count;
     }
 
-  
 
+
+    public void sortGOtoTiles()
+    {
+        HashSet<GameObject> goSet = new HashSet<GameObject>();
+        Dictionary<int, HashSet<GameObject>> tileDict = new Dictionary<int, HashSet<GameObject>>();
+
+        // find all GameObjects in scene an add to list 
+        List<GameObject> goAllList = new List<GameObject>();
+        GameObject[] allObjects = UnityEngine.Object.FindObjectsOfType<GameObject>();
+        foreach (var go in allObjects)
+        {
+            goAllList.Add(go);
+        }
+
+        // sorting ALL boids to tile
+        foreach (var go in goAllList)
+        {
+            // create key
+            int tileKey = GetTile(go.transform.position);
+
+            // add go to key in tileDict
+            if (!tileDict.ContainsKey(tileKey))
+            {
+                tileDict.Add(tileKey, new HashSet<GameObject>());
+            }
+            tileDict[tileKey].Add(go);
+
+            DebugDrawTiles(go.transform.position);
+            // Debug.Log(GetBoidsperTile(tileDict, tileKey));
+        }
+
+        // looping through tile and activate update of agents
+        /*
+        foreach (var item in tileDict.Keys)
+        {
+            var tileKey = item;
+
+            foreach (var boid in tileDict[tileKey])
+            {
+                List<Boid> Vision = new List<Boid>();
+                Vision = tileDict[tileKey].ToList();  // works // if (this != boid) // selfcheck             
+                boid.oldUpdate(Vision);
+            }
+        }
+        */
+    }
+
+
+    /*
     /// <summary>
     /// get component from inst works with Boid class
     /// </summary>
@@ -178,12 +227,13 @@ public class Tiling : MonoBehaviour
             }
         }
     }
+    */
 
     // Update is called Aonce per frame
     void Update()
     {
-
-        boidSortingStuff();
+        sortGOtoTiles();
+       // boidSortingStuff();
 
 
     }
