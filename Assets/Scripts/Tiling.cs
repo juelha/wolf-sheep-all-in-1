@@ -21,7 +21,7 @@ public class Tiling : MonoBehaviour
     // public Boid boid;
 
     private Wolf wolf;
-    private Sheep sheep;
+    private Sheep sheepInst;
     private GrassGrowthAgent grass;
 
     private static int GetPosHashMapKey(float3 position)
@@ -50,12 +50,12 @@ public class Tiling : MonoBehaviour
 
 
 
-    public List<Boid> SpawnBoids(GameObject prefab, int percent)
+    public List<Sheep> SpawnSheep(GameObject prefab, int percent)
     {
        // percent = 10;
         
         var radius = 5;
-        List<Boid> boidsTemp = new List<Boid>();
+        List<Sheep> boidsTemp = new List<Sheep>();
 
         var number = 5;
         for (int i = 0; i < number; i++)
@@ -64,7 +64,7 @@ public class Tiling : MonoBehaviour
             Vector3 pos = this.transform.position + UnityEngine.Random.insideUnitSphere * radius;
             Quaternion rot = UnityEngine.Random.rotation;
 
-            Boid newBoid = Instantiate(prefab, pos, rot).GetComponent<Boid>();
+            Sheep newBoid = Instantiate(prefab, pos, rot).GetComponent<Sheep>();
             newBoid.GetComponent<Renderer>().material.SetColor("_Color", Color.white);
             boidsTemp.Add(newBoid);
         }
@@ -78,7 +78,7 @@ public class Tiling : MonoBehaviour
     void Start()
     {
         wolf = Wolf.Instance;
-        sheep = Sheep.Instance;
+        sheepInst = Sheep.Instance;
         grass = GrassGrowthAgent.Instance;
 
         //  boid = new Sheep();
@@ -87,11 +87,12 @@ public class Tiling : MonoBehaviour
         // var sheepL = (Spawn(prefab, 60))
         //  sheep.SetSheepList(Spawn(prefab,60));
 
-       // var boids = SpawnBoids(prefab, 60);
+        // var boids = SpawnBoids(prefab, 60);
 
-       // var sheepList = Converter.ConvertToSheep(boids);
-
-        sheep.SetSheepList(Converter.ConvertToSheep(SpawnBoids(prefab, 60)));
+        var sheep = SpawnSheep(prefab, 60);
+        // var sheepList = Converter.ConvertToSheep(boids);
+        sheepInst.SetSheepList(sheep);
+        //  sheep.SetSheepList(Converter.ConvertToSheep(SpawnBoids(prefab, 60)));
 
 
     }
@@ -109,19 +110,22 @@ public class Tiling : MonoBehaviour
     {
         // wolf.Spawn(40);
         // sheep.Spawn(60);
-        /*
+       // /*
 
         // debug stuff
         // Debug.Log(spawner.boids.Count);
 
+        //HashSet<Boid> boidsSet = new HashSet<Boid>();
+        //Dictionary<int, HashSet<Boid>> tileDict = new Dictionary<int, HashSet<Boid>>();
+
         HashSet<Boid> boidsSet = new HashSet<Boid>();
         Dictionary<int, HashSet<Boid>> tileDict = new Dictionary<int, HashSet<Boid>>();
 
-        //  NativeMultiHashMap<int, Boid> tileMultiHashMap = new NativeMultiHashMap<int, Boid>(spawner.boids.Count, Allocator.Temp);
-
         // sorting ALL boids to tile
-        foreach (var boid in spawner.boids)
+        foreach (var sheep in sheepInst.GetSheepList())
         {
+            var boid = sheep.GetComponent<Boid>();
+
             // create key
             int tileKey = GetPosHashMapKey(boid.transform.position);
 
@@ -147,6 +151,7 @@ public class Tiling : MonoBehaviour
             {
                 List<Boid> Vision = new List<Boid>();
                 Vision = tileDict[tileKey].ToList();  // works // if (this != boid) // selfcheck
+                //var eh = boid.GetComponent<Boid>();
                 boid.oldUpdate(Vision);
 
                 //    Debug.Log("BOID IN VISION");
@@ -158,14 +163,14 @@ public class Tiling : MonoBehaviour
         }
 
 
-        */
+       // */
 
 
     }
 }
 
 
-
+/*
 public class Converter
 {
     /// <summary>
@@ -208,5 +213,32 @@ public class Converter
         }
         return sheepList;
         */
+   // }
+//}
+
+/*
+public List<Boid> SpawnBoids(GameObject prefab, int percent)
+{
+    // percent = 10;
+
+    var radius = 5;
+    List<Boid> boidsTemp = new List<Boid>();
+
+    var number = 5;
+    for (int i = 0; i < number; i++)
+    {
+
+        Vector3 pos = this.transform.position + UnityEngine.Random.insideUnitSphere * radius;
+        Quaternion rot = UnityEngine.Random.rotation;
+
+        Boid newBoid = Instantiate(prefab, pos, rot).GetComponent<Boid>();
+        newBoid.GetComponent<Renderer>().material.SetColor("_Color", Color.white);
+        boidsTemp.Add(newBoid);
     }
+    Debug.Log(boidsTemp);
+
+    return boidsTemp;
+
 }
+
+*/ 
