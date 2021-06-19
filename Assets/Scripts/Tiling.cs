@@ -16,17 +16,37 @@ public class Tiling : MonoBehaviour
     private const int tileYMultiplier = 1000;
     private const int tileSize = 5;
     [SerializeField] private GameObject prefab;
+    public GameObject prefabgrass;
 
     // public List<Boid> boidList;
     // public Boid boid;
 
     private Wolf wolf;
     private Sheep sheepInst;
-    private GrassGrowthAgent grass;
+    private GrassGrowthAgent grassInst;
 
-    private static int GetPosHashMapKey(float3 position)
+    private static int GetTile(float3 position)
     {
         return (int)(math.floor(position.x / tileSize) + (tileYMultiplier * math.floor(position.y / tileSize)));
+    }
+
+    public static List<Vector3> LoopOverTiles()
+    {
+        List<Vector3> TilesList = new List<Vector3>();
+        float3 position;
+       // var ble = grassInst.Width;
+        for (var x = 0; x < 10; x++)
+        {
+            position.x = x;
+            for (var y = 0; y < 10; y++)
+            {
+                position.y = y;
+                position.z = 0;
+                TilesList.Add(position);
+            }
+        }
+
+        return TilesList;
     }
 
     private static void DebugDrawTiles(float3 position)
@@ -39,7 +59,7 @@ public class Tiling : MonoBehaviour
         Debug.DrawLine(lowerLeft + new Vector3(+1, +0) * tileSize, lowerLeft + new Vector3(+1, +1) * tileSize);
         Debug.DrawLine(lowerLeft + new Vector3(+0, +1) * tileSize, lowerLeft + new Vector3(+1, +1) * tileSize);
 
-        // Debug.Log(GetPosHashMapKey(position) + " " + position);
+        // Debug.Log(GetTile(position) + " " + position);
     }
 
     private void Awake()
@@ -74,60 +94,65 @@ public class Tiling : MonoBehaviour
 
     }
 
+    public List<GrassGrowthAgent> Grow(GameObject prefab) // Spaw grass quadrant
+    {
+
+        List<GrassGrowthAgent> boidsTemp = new List<GrassGrowthAgent>();
+        var posList = Tiling.LoopOverTiles();
+        foreach (var posL in posList)
+        {
+            // Vector3 pos = this.transform.position + posL;
+            Quaternion rot = Quaternion.identity;
+
+            GrassGrowthAgent newBoid = Instantiate(prefab, posL,rot).GetComponent<GrassGrowthAgent>();
+            newBoid.GetComponent<Renderer>().material.SetColor("_Color", Color.green);
+            boidsTemp.Add(newBoid);
+        }
+        return boidsTemp;
+    }
+
     // Start is called before the first frame update
     void Start()
     {
         wolf = Wolf.Instance;
         sheepInst = Sheep.Instance;
-        grass = GrassGrowthAgent.Instance;
-
-        //  boid = new Sheep();
-        // boidList = new List<Sheep>();
-        //List<Boid> boidTemp = Spawn(prefab, 60);
-        // var sheepL = (Spawn(prefab, 60))
-        //  sheep.SetSheepList(Spawn(prefab,60));
-
-        // var boids = SpawnBoids(prefab, 60);
+        grassInst = GrassGrowthAgent.Instance;
 
         var sheep = SpawnSheep(prefab, 60);
         // var sheepList = Converter.ConvertToSheep(boids);
         sheepInst.SetSheepList(sheep);
+        Grow(prefabgrass);
+
         //  sheep.SetSheepList(Converter.ConvertToSheep(SpawnBoids(prefab, 60)));
 
 
     }
 
-    /*
+    
     private int GetBoidsperTile(Dictionary<int, HashSet<Boid>> tileDict, int tileKey)
     {
 
         return tileDict[tileKey].Count;
     }
 
-   */
-    // Update is called Aonce per frame
-    void Update()
+  
+
+    /// <summary>
+    /// get component from inst works with Boid class
+    /// </summary>
+    public void boidSortingStuff()
     {
-        // wolf.Spawn(40);
-        // sheep.Spawn(60);
-       // /*
-
-        // debug stuff
-        // Debug.Log(spawner.boids.Count);
-
-        //HashSet<Boid> boidsSet = new HashSet<Boid>();
-        //Dictionary<int, HashSet<Boid>> tileDict = new Dictionary<int, HashSet<Boid>>();
-
         HashSet<Boid> boidsSet = new HashSet<Boid>();
         Dictionary<int, HashSet<Boid>> tileDict = new Dictionary<int, HashSet<Boid>>();
 
         // sorting ALL boids to tile
         foreach (var sheep in sheepInst.GetSheepList())
         {
+            //sheep.Update(); -> no need to call manually 
             var boid = sheep.GetComponent<Boid>();
 
             // create key
-            int tileKey = GetPosHashMapKey(boid.transform.position);
+            int tileKey = GetTile(boid.transform.position);
 
             // add boid to key in tileDict
             if (!tileDict.ContainsKey(tileKey))
@@ -145,29 +170,27 @@ public class Tiling : MonoBehaviour
         {
             var tileKey = item;
 
-            //  Debug.Log(GetBoidsperTile(tileDict, tileKey));
-
             foreach (var boid in tileDict[tileKey])
             {
                 List<Boid> Vision = new List<Boid>();
-                Vision = tileDict[tileKey].ToList();  // works // if (this != boid) // selfcheck
-                //var eh = boid.GetComponent<Boid>();
+                Vision = tileDict[tileKey].ToList();  // works // if (this != boid) // selfcheck             
                 boid.oldUpdate(Vision);
-
-                //    Debug.Log("BOID IN VISION");
-                // Debug.Log(Vision);
             }
-
-
-
         }
+    }
 
+    // Update is called Aonce per frame
+    void Update()
+    {
 
-       // */
+        boidSortingStuff();
 
 
     }
 }
+
+
+
 
 
 /*
@@ -213,7 +236,7 @@ public class Converter
         }
         return sheepList;
         */
-   // }
+// }
 //}
 
 /*

@@ -9,12 +9,17 @@ public class GrassGrowthAgent : MonoBehaviour
 
     public int GrassRegrowthPerStep { get; set; }
 
+    public int Width { get; set; }
+    public int Height { get; set; }
+
     /*
     public void Init(GrasslandLayer layer)
     {
         Grassland = layer;
     }
     */
+
+
 
     public void Die()
     {
@@ -41,6 +46,8 @@ public class GrassGrowthAgent : MonoBehaviour
     void Awake()
     {
         Instance = this;
+        Width = 10;
+        Height = 10;
        // wolvesList.Clear();
     }
 

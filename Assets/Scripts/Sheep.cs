@@ -111,7 +111,7 @@ public class Sheep : Boid
     // Update is called once per frame
     void Update()
     {
-        
+        Debug.Log("fsociety");
         Tick();
        // calculateVelocity(Vision);
        // movePosition();
