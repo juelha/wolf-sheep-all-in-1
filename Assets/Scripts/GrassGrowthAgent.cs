@@ -27,6 +27,8 @@ public class GrassGrowthAgent : MonoBehaviour
     public void Die()
     {
         Destroy(GetComponent<GameObject>());
+        Destroy(this);
+        Debug.Log("die");
         //  _grassland.SheepEnvironment.Remove(this);
         //  UnregisterHandle.Invoke(_grassland, this);
     }

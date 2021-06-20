@@ -33,7 +33,7 @@ public class Tiling : MonoBehaviour
         return (int)(math.floor(position.x / tileSize) + (tileYMultiplier * math.floor(position.y / tileSize)));
     }
 
-    public static List<Vector3> LoopOverTiles()
+    public static List<Vector3> LoopOverPos()
     {
         List<Vector3> TilesList = new List<Vector3>();
         float3 position;
@@ -48,9 +48,10 @@ public class Tiling : MonoBehaviour
                 TilesList.Add(position);
             }
         }
-
         return TilesList;
     }
+
+
 
     private static void DebugDrawTiles(float3 position)
     {
@@ -99,15 +100,11 @@ public class Tiling : MonoBehaviour
 
     public List<GrassGrowthAgent> Grow(GameObject prefab) // Spaw grass quadrant
     {
-
         List<GrassGrowthAgent> boidsTemp = new List<GrassGrowthAgent>();
-        var posList = Tiling.LoopOverTiles();
+        var posList = Tiling.LoopOverPos();
         foreach (var posL in posList)
         {
-            // Vector3 pos = this.transform.position + posL;
-            Quaternion rot = Quaternion.identity;
-
-            GrassGrowthAgent newBoid = Instantiate(prefab, posL,rot).GetComponent<GrassGrowthAgent>();
+            GrassGrowthAgent newBoid = Instantiate(prefab, posL, Quaternion.identity).GetComponent<GrassGrowthAgent>();
             newBoid.GetComponent<Renderer>().material.SetColor("_Color", Color.green);
             boidsTemp.Add(newBoid);
         }
@@ -121,24 +118,15 @@ public class Tiling : MonoBehaviour
         sheepInst = Sheep.Instance;
         grassInst = GrassGrowthAgent.Instance;
 
-        var sheep = SpawnSheep(prefab, 60);
-        // var sheepList = Converter.ConvertToSheep(boids);
-        sheepInst.SetSheepList(sheep);
+        sheepInst.SetSheepList(SpawnSheep(prefab, 60));
 
-        var grass = Grow(prefabgrass);
-        grassInst.SetGrassList(grass);
-        //  sheep.SetSheepList(Converter.ConvertToSheep(SpawnBoids(prefab, 60)));
-
-       // HashSet<GameObject> goSet = new HashSet<GameObject>();
-        
-
+        grassInst.SetGrassList(Grow(prefabgrass));
 
     }
 
     
     private int GetBoidsperTile(Dictionary<int, HashSet<Boid>> tileDict, int tileKey)
     {
-
         return tileDict[tileKey].Count;
     }
 
@@ -184,70 +172,16 @@ public class Tiling : MonoBehaviour
         {
             foreach (var go in tileDict[tileKey])
             {
-                Debug.Log("HERE");
-                Debug.Log(go.GetType()); // UnityEngine.GameObject
-                Debug.Log(typeof(Sheep)); // Sheep
-
                 if (go.GetComponent<Sheep>())
-                {
-                    Debug.Log("amihere");
-
-                    //yaddayadda
-                    List<GameObject> Vision = new List<GameObject>();
-                    Vision = tileDict[tileKey].ToList();  // works // if (this != boid) // selfcheck             
-                    //
-
-                    go.GetComponent<Sheep>().Tick(Vision); 
-
+                {        
+                    // get List of what Sheep can see and call update (hier -> tick()) maunally
+                    go.GetComponent<Sheep>().Tick(tileDict[tileKey].ToList()); 
                 }
-                    
             }
         }
     }
 
-    /*
-    /// <summary>
-    /// get component from inst works with Boid class
-    /// </summary>
-    public void boidSortingStuff()
-    {
-        HashSet<Boid> boidsSet = new HashSet<Boid>();
-        Dictionary<int, HashSet<Boid>> tileDict = new Dictionary<int, HashSet<Boid>>();
 
-        // sorting ALL boids to tile
-        foreach (var sheep in sheepInst.GetSheepList())
-        {
-            //sheep.Update(); -> no need to call manually 
-            var boid = sheep.GetComponent<Boid>();
-
-            // create key
-            int tileKey = GetTile(boid.transform.position);
-
-            // add boid to key in tileDict
-            if (!tileDict.ContainsKey(tileKey))
-            {
-                tileDict.Add(tileKey, new HashSet<Boid>());
-            }
-            tileDict[tileKey].Add(boid);
-
-            DebugDrawTiles(boid.transform.position);
-            // Debug.Log(GetBoidsperTile(tileDict, tileKey));
-        }
-
-        // looping through tile
-        foreach (var item in tileDict.Keys)
-        {
-            var tileKey = item;
-
-            foreach (var boid in tileDict[tileKey])
-            {
-                List<Boid> Vision = new List<Boid>();
-                Vision = tileDict[tileKey].ToList();  // works // if (this != boid) // selfcheck             
-                boid.oldUpdate(Vision);
-            }
-        }
-    }
-    */
 
     // Update is called Aonce per frame
     void Update()

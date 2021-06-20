@@ -8,7 +8,7 @@ public class Sheep : Boid
 {
 
     /// <summary>
-    ///     Sheep walk around by chance.
+    ///     Sheep move according to Boid Rules (see Boid.cs)
     ///     If grass is under the sheep, it eats the grass. Otherwise do nothing, this tick.
     ///     Every few rounds a new sheep is spawned, which receives half of the energy  
     /// </summary>
@@ -43,15 +43,22 @@ public class Sheep : Boid
         // filter Vision
         foreach (var go in Vision)
         {
-            if (go.GetType() == typeof(Sheep))
+            if (go.GetComponent<Sheep>())
             {
-                // var boid = go.GetComponent<Boid>();
                 SheepIcanSee.Add(go.GetComponent<Boid>());
+            }
+            if (go.GetComponent<GrassGrowthAgent>())
+            {
+                EatGrass(go.GetComponent<GrassGrowthAgent>());
             }
         }
 
-        var boid = this.GetComponent<Boid>();
-        boid.oldUpdate(SheepIcanSee);
+        this.GetComponent<Boid>().BoidMovement(SheepIcanSee);
+
+
+
+
+
         EnergyLoss();
        // SheepReproduce = 2;
        // Spawn(SheepReproduce);
@@ -60,16 +67,19 @@ public class Sheep : Boid
 
     private void EatGrass(GrassGrowthAgent grass)
     {
-      //  if(this.GetTile() is Key in grassdict then)
-        foreach(var grassobj in grass.GetGrassList())
+        Debug.Log("????");
+        Energy += SheepGainFromFood;
+       // grass.Die();
+        GameObject.DestroyImmediate(grass.GetComponent<GameObject>());
+       // GameObject.Destroy(grass.GetComponent<GameObject>());
+      //  Destroy(grass.GetComponent<GameObject>());
+
+        if (this.transform.position.x == grass.transform.position.x)
         {
-            if (this.transform.position.x == grassobj.transform.position.x)
-            {
-                Energy += SheepGainFromFood;
-                grass.Die();
-            }
-                
+            
+            
         }
+
         
     }
 
@@ -93,15 +103,6 @@ public class Sheep : Boid
 
    // public Guid ID { get; set; }
 
-    //-----------------------------------------------------------------------------------------
-    /// <summary>
-    /// BoidRules 
-    /// </summary>
-    /// 
-  
-
-
-
     //------------------------------------------------------------------------------------------
 
     void Awake()
@@ -122,12 +123,4 @@ public class Sheep : Boid
 
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        Debug.Log("fsociety");
-        //Tick();
-       // calculateVelocity(Vision);
-       // movePosition();
-    }
 }

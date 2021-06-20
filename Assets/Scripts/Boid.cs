@@ -24,7 +24,6 @@ public class Boid : MonoBehaviour
     void Awake()
     {
         BoidInstance = this;
-
         boid = Boid.BoidInstance;
         // boids.Clear();
     }
@@ -32,14 +31,11 @@ public class Boid : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        // spawner = BoidSpawner.Instance;
-
-        velocity = this.transform.forward * maxVelocity; // start at max speed 
-                                                         //boid = GetComponent<Boid>();
+        velocity = this.transform.forward * maxVelocity; 
     }
 
     // Update is called once per frame
-    public void oldUpdate(List<Boid> Vision)
+    public void BoidMovement(List<Boid> Vision)
     {
         Debug.Log("TEST");
         calculateVelocity(Vision);
@@ -50,21 +46,14 @@ public class Boid : MonoBehaviour
 
     void calculateVelocity(List<Boid> Vision)
     {
-
-        // List<Boid> Vision = 
-
         // init
         var average_alignment = Vector3.zero;
         var average_cohesion = Vector3.zero;
         var average_separation = Vector3.zero;
 
-        // Create a list  
-        //List<Boid> BoidsList = new List<Boid>();
-        //BoidsList.Add(FindObjectOfType<Boid>());
         Vector3 seperationSum = Vector3.zero;
         Vector3 positionSum = Vector3.zero;
         Vector3 headingSum = Vector3.zero;
-
 
         Vector3 separationForce = Vector3.zero;
         Vector3 cohesionForce = Vector3.zero;
@@ -73,24 +62,8 @@ public class Boid : MonoBehaviour
 
         int boidsNearby = 0;
 
-        // Create a list  
-        // List<Boid> BoidsList = new List<Boid>();
-
-        // BoidsList = spawner.GetBoids();
-
-
-
-        // BoidsList.Add(FindObjectOfType<GameObject>());
-        // debug stuff
-        // Debug.Log(BoidsList.Count);
-        // Debug.Log(spawner.boids.Count);
         foreach (var boid in Vision)
-        //  for (int i = 0; i < spawner.boids.Count; i++)
         {
-             
-
-
-
             if (this != boid) // selfcheck
             {
 
@@ -104,10 +77,8 @@ public class Boid : MonoBehaviour
                 var Colorother = boid.GetComponent<Renderer>().material.color;
 
                 //  Colornew = Colorme - Colorother;
-
-
                 Debug.DrawRay(transform.position, boid.transform.position - transform.position, Colorme);  // works!!!
-                                                                                                           //  */
+                //  */
 
                 // rules
                 if (distToOtherBoid < radius)
@@ -140,8 +111,6 @@ public class Boid : MonoBehaviour
         // container
         if (transform.position.magnitude > radius)
         {
-
-
             //                                            direction from where we are           increase the further u get outside           smoothing out 
             boundaryForce = transform.position.normalized * (radius - transform.position.magnitude) * Time.deltaTime;
             // boundaryForce *= boundaryWeight; 
@@ -150,15 +119,11 @@ public class Boid : MonoBehaviour
 
         velocity += separationForce + cohesionForce + alignmentForce + boundaryForce;
 
-
     }
 
 
     void movePosition()
     {
-
-        // TODO add weight here?
-
         // limit velocity 
         if (velocity.magnitude > maxVelocity)
         {
@@ -177,9 +142,6 @@ public class Boid : MonoBehaviour
 
 
     }
-
-
-
 
 
 
