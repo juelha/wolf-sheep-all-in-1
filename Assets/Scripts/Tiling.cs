@@ -13,6 +13,9 @@ using System.Reflection;
 public class Tiling : MonoBehaviour
 {
     public static Tiling TilingInstance;
+    public Dictionary<int, HashSet<GameObject>> tileDict;
+
+
     private const int tileYMultiplier = 1000;
     private const int tileSize = 5;
     [SerializeField] private GameObject prefab;
@@ -126,6 +129,9 @@ public class Tiling : MonoBehaviour
         grassInst.SetGrassList(grass);
         //  sheep.SetSheepList(Converter.ConvertToSheep(SpawnBoids(prefab, 60)));
 
+       // HashSet<GameObject> goSet = new HashSet<GameObject>();
+        
+
 
     }
 
@@ -138,10 +144,11 @@ public class Tiling : MonoBehaviour
 
 
 
-    public void sortGOtoTiles()
+    public void sortGotoTiles()
     {
-        HashSet<GameObject> goSet = new HashSet<GameObject>();
-        Dictionary<int, HashSet<GameObject>> tileDict = new Dictionary<int, HashSet<GameObject>>();
+        Debug.Log(tileDict);
+        tileDict = new Dictionary<int, HashSet<GameObject>>();
+
 
         // find all GameObjects in scene an add to list 
         List<GameObject> goAllList = new List<GameObject>();
@@ -168,22 +175,35 @@ public class Tiling : MonoBehaviour
             // Debug.Log(GetBoidsperTile(tileDict, tileKey));
         }
 
-        // looping through tile and activate update of agents
-        /*
-        foreach (var item in tileDict.Keys)
-        {
-            var tileKey = item;
-
-            foreach (var boid in tileDict[tileKey])
-            {
-                List<Boid> Vision = new List<Boid>();
-                Vision = tileDict[tileKey].ToList();  // works // if (this != boid) // selfcheck             
-                boid.oldUpdate(Vision);
-            }
-        }
-        */
     }
 
+    // looping through tiles and activate update of agents
+    public void loopOverTiles()
+    {
+        foreach (int tileKey in tileDict.Keys)
+        {
+            foreach (var go in tileDict[tileKey])
+            {
+                Debug.Log("HERE");
+                Debug.Log(go.GetType()); // UnityEngine.GameObject
+                Debug.Log(typeof(Sheep)); // Sheep
+
+                if (go.GetType(Sheep) == typeof(Sheep))
+                {
+                    Debug.Log("amihere");
+
+                    //yaddayadda
+                    List<GameObject> Vision = new List<GameObject>();
+                    Vision = tileDict[tileKey].ToList();  // works // if (this != boid) // selfcheck             
+                    //
+
+                    go.GetComponent<Sheep>().Tick(Vision); 
+
+                }
+                    
+            }
+        }
+    }
 
     /*
     /// <summary>
@@ -232,7 +252,8 @@ public class Tiling : MonoBehaviour
     // Update is called Aonce per frame
     void Update()
     {
-        sortGOtoTiles();
+        sortGotoTiles();
+        loopOverTiles();
        // boidSortingStuff();
 
 

@@ -36,22 +36,26 @@ public class Sheep : Boid
 
 
 
-    public void Tick()
+    public void Tick(List<GameObject> Vision)
     {
+       
+        List<Boid> SheepIcanSee = new List<Boid>();
+        // filter Vision
+        foreach (var go in Vision)
+        {
+            if (go.GetType() == typeof(Sheep))
+            {
+                // var boid = go.GetComponent<Boid>();
+                SheepIcanSee.Add(go.GetComponent<Boid>());
+            }
+        }
+
+        var boid = this.GetComponent<Boid>();
+        boid.oldUpdate(SheepIcanSee);
         EnergyLoss();
        // SheepReproduce = 2;
        // Spawn(SheepReproduce);
-        /*
-        if (_grassland[id_key] > 0)
-        {
-            Rule = "R1 - Eat grass";
-            EatGrass();
-        }
-        else
-        {
-            Rule = "R2 - No food found";
-        }
-        */
+
     }
 
     private void EatGrass(GrassGrowthAgent grass)
@@ -122,7 +126,7 @@ public class Sheep : Boid
     void Update()
     {
         Debug.Log("fsociety");
-        Tick();
+        //Tick();
        // calculateVelocity(Vision);
        // movePosition();
     }

@@ -41,6 +41,7 @@ public class Boid : MonoBehaviour
     // Update is called once per frame
     public void oldUpdate(List<Boid> Vision)
     {
+        Debug.Log("TEST");
         calculateVelocity(Vision);
         movePosition();
 
@@ -86,7 +87,7 @@ public class Boid : MonoBehaviour
         foreach (var boid in Vision)
         //  for (int i = 0; i < spawner.boids.Count; i++)
         {
-            // Debug.Log("TEST");
+             
 
 
 
