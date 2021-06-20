@@ -20,11 +20,12 @@ public class Tiling : MonoBehaviour
     private const int tileSize = 5;
     [SerializeField] private GameObject prefab;
     public GameObject prefabgrass;
+    public GameObject prefabwolf;
 
     // public List<Boid> boidList;
     // public Boid boid;
 
-    private Wolf wolf;
+    private Wolf wolfInst;
     private Sheep sheepInst;
     private GrassGrowthAgent grassInst;
 
@@ -98,6 +99,30 @@ public class Tiling : MonoBehaviour
 
     }
 
+    public List<Wolf> SpawnWolves(GameObject prefab, int percent)
+    {
+        // percent = 10;
+
+        var radius = 5;
+        List<Wolf> boidsTemp = new List<Wolf>();
+
+        var number = 5;
+        for (int i = 0; i < number; i++)
+        {
+
+            Vector3 pos = this.transform.position + UnityEngine.Random.insideUnitSphere * radius;
+            Quaternion rot = UnityEngine.Random.rotation;
+
+            Wolf newBoid = Instantiate(prefab, pos, rot).GetComponent<Wolf>();
+            newBoid.GetComponent<Renderer>().material.SetColor("_Color", Color.black);
+            boidsTemp.Add(newBoid);
+        }
+        Debug.Log(boidsTemp);
+
+        return boidsTemp;
+
+    }
+
     public List<GrassGrowthAgent> Grow(GameObject prefab) // Spaw grass quadrant
     {
         List<GrassGrowthAgent> boidsTemp = new List<GrassGrowthAgent>();
@@ -114,11 +139,13 @@ public class Tiling : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        wolf = Wolf.Instance;
+        wolfInst = Wolf.Instance;
         sheepInst = Sheep.Instance;
         grassInst = GrassGrowthAgent.Instance;
 
         sheepInst.SetSheepList(SpawnSheep(prefab, 60));
+
+        SpawnWolves(prefabwolf, 60);
 
         grassInst.SetGrassList(Grow(prefabgrass));
 
@@ -132,7 +159,7 @@ public class Tiling : MonoBehaviour
 
 
 
-    public void sortGotoTiles()
+    public void sortGOtoTiles()
     {
         Debug.Log(tileDict);
         tileDict = new Dictionary<int, HashSet<GameObject>>();
@@ -172,10 +199,17 @@ public class Tiling : MonoBehaviour
         {
             foreach (var go in tileDict[tileKey])
             {
+                // sheep
                 if (go.GetComponent<Sheep>())
                 {        
                     // get List of what Sheep can see and call update (hier -> tick()) maunally
                     go.GetComponent<Sheep>().Tick(tileDict[tileKey].ToList()); 
+                }
+                // wolf
+                if (go.GetComponent<Wolf>())
+                {
+                    // get List of what Sheep can see and call update (hier -> tick()) maunally
+                    go.GetComponent<Wolf>().Tick(tileDict[tileKey].ToList());
                 }
             }
         }
@@ -186,11 +220,8 @@ public class Tiling : MonoBehaviour
     // Update is called Aonce per frame
     void Update()
     {
-        sortGotoTiles();
+        sortGOtoTiles();
         loopOverTiles();
-       // boidSortingStuff();
-
-
     }
 }
 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 
+
 [System.Serializable]
 public class Sheep : Boid
 {
@@ -39,13 +40,13 @@ public class Sheep : Boid
     public void Tick(List<GameObject> Vision)
     {
        
-        List<Boid> SheepIcanSee = new List<Boid>();
+        List<Boid> SheepICanSee = new List<Boid>();
         // filter Vision
         foreach (var go in Vision)
         {
             if (go.GetComponent<Sheep>())
             {
-                SheepIcanSee.Add(go.GetComponent<Boid>());
+                SheepICanSee.Add(go.GetComponent<Boid>());
             }
             if (go.GetComponent<GrassGrowthAgent>())
             {
@@ -54,7 +55,9 @@ public class Sheep : Boid
             }
         }
 
-        this.GetComponent<Boid>().BoidMovement(SheepIcanSee);
+        // TODO: add rule: seek food
+        // TODO: add rule: flee
+        this.GetComponent<Boid>().BoidMovement(SheepICanSee);
 
 
 
@@ -68,21 +71,12 @@ public class Sheep : Boid
 
     private void EatGrass(GameObject grass)
     {
-
         double delta = 0.5;
         if ((transform.position - grass.transform.position).magnitude <  delta)
         {
-
-            Debug.Log("????");
-            Debug.Log("testing");
             Energy += SheepGainFromFood;
-            // grass.Die();
             Destroy(grass);
-            // GameObject.Destroy(grass.GetComponent<GameObject>());
-            //  Destroy(grass.GetComponent<GameObject>());
         }
-
-
     }
 
     private void EnergyLoss()
