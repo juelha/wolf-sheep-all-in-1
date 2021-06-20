@@ -188,7 +188,7 @@ public class Tiling : MonoBehaviour
                 Debug.Log(go.GetType()); // UnityEngine.GameObject
                 Debug.Log(typeof(Sheep)); // Sheep
 
-                if (go.GetType(Sheep) == typeof(Sheep))
+                if (go.GetComponent<Sheep>())
                 {
                     Debug.Log("amihere");
 
