@@ -39,7 +39,7 @@ public class Wolf : Boid
        // Spawn(WolfReproduce);
 
         List<Boid> WolvesICanSee = new List<Boid>();
-        List<Sheep> SheepICanSee = new List<Sheep>();
+        List<GameObject> SheepICanSee = new List<GameObject>();
         // filter Vision
         foreach (var go in Vision)
         {
@@ -51,23 +51,37 @@ public class Wolf : Boid
             // sheep
             if (go.GetComponent<Sheep>())
             {
-                SheepICanSee.Add(go.GetComponent<Sheep>());
+                SheepICanSee.Add(go);
             }
             
         }
 
+
         // TODO: add rule: seek food
         // TODO: add rule: flee
         this.GetComponent<Boid>().BoidMovement(WolvesICanSee);
-
+        this.Hunt(SheepICanSee);
 
 
     }
 
-    private void MoveTowardsTarget(Sheep target)
+    private void Hunt(List<GameObject> SheepICanSee)
     {
-        var directionToEnemy = (transform.position - target.transform.position);
-        velocity += directionToEnemy;
+        foreach (var target in SheepICanSee)
+        {
+            // kill sheep
+            double delta = 0.5;
+            if ((transform.position - target.transform.position).magnitude < delta)
+            {
+                Energy += WolfGainFromFood;
+                Destroy(target);
+            }
+            // MoveTowardsTarget
+            var directionToEnemy = (transform.position - target.transform.position);
+            velocity += directionToEnemy;
+            velocity *= 100;
+        }
+        
     }
 
     private void EnergyLoss()
