@@ -71,14 +71,14 @@ public class Boid : MonoBehaviour
                 float distToOtherBoid = (transform.position - otherBoidPosition).magnitude;
 
                 // draw rays and change color per boid
-                // /*
+                 /*
                 //  var Colornew;
                 var Colorme = this.GetComponent<Renderer>().material.color;
                 var Colorother = boid.GetComponent<Renderer>().material.color;
 
                 //  Colornew = Colorme - Colorother;
                 Debug.DrawRay(transform.position, boid.transform.position - transform.position, Colorme);  // works!!!
-                //  */
+                 */
 
                 // rules
                 if (distToOtherBoid < radius)
