@@ -49,7 +49,8 @@ public class Sheep : Boid
             }
             if (go.GetComponent<GrassGrowthAgent>())
             {
-                EatGrass(go.GetComponent<GrassGrowthAgent>());
+                // Destroy(go); // works
+                EatGrass(go);
             }
         }
 
@@ -65,22 +66,23 @@ public class Sheep : Boid
 
     }
 
-    private void EatGrass(GrassGrowthAgent grass)
+    private void EatGrass(GameObject grass)
     {
-        Debug.Log("????");
-        Energy += SheepGainFromFood;
-       // grass.Die();
-        GameObject.DestroyImmediate(grass.GetComponent<GameObject>());
-       // GameObject.Destroy(grass.GetComponent<GameObject>());
-      //  Destroy(grass.GetComponent<GameObject>());
 
-        if (this.transform.position.x == grass.transform.position.x)
+        double delta = 0.5;
+        if ((transform.position - grass.transform.position).magnitude <  delta)
         {
-            
-            
+
+            Debug.Log("????");
+            Debug.Log("testing");
+            Energy += SheepGainFromFood;
+            // grass.Die();
+            Destroy(grass);
+            // GameObject.Destroy(grass.GetComponent<GameObject>());
+            //  Destroy(grass.GetComponent<GameObject>());
         }
 
-        
+
     }
 
     private void EnergyLoss()
