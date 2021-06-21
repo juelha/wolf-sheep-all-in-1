@@ -94,17 +94,30 @@ public class Tiling : MonoBehaviour
         {
             foreach (var go in tileDict[tileKey])
             {
+                List<GameObject> StuffICanSee = new List<GameObject>();
+
                 // sheep
+                // get List of what Sheep can see and call update (hier -> tick()) 
                 if (go.GetComponent<Sheep>())
                 {
-                    // get List of what Sheep can see and call update (hier -> tick()) maunally
-                    go.GetComponent<Sheep>().Tick(tileDict[tileKey].ToList());
+                    // get own tile and adjacent tiles -> cross style (diagonal adjacent tiles are not covered) <- TODO!!
+                    StuffICanSee.AddRange(tileDict[tileKey].ToList()); // own 
+                    StuffICanSee.AddRange(tileDict[tileKey+1].ToList()); // tile to the right
+                    StuffICanSee.AddRange(tileDict[tileKey-1].ToList()); // tile to the left
+                    StuffICanSee.AddRange(tileDict[tileKey+tileYMultiplier].ToList()); // tile above
+                    StuffICanSee.AddRange(tileDict[tileKey-tileYMultiplier].ToList()); // tile below
+                    go.GetComponent<Sheep>().Tick(StuffICanSee);
                 }
                 // wolf
+                // get List of what Wolf can see and call update (hier -> tick()) MANUALLY
                 if (go.GetComponent<Wolf>())
                 {
-                    // get List of what Wolf can see and call update (hier -> tick()) maunally
-                    go.GetComponent<Wolf>().Tick(tileDict[tileKey].ToList());
+                    StuffICanSee.AddRange(tileDict[tileKey].ToList()); // own 
+                    StuffICanSee.AddRange(tileDict[tileKey + 1].ToList()); // tile to the right
+                    StuffICanSee.AddRange(tileDict[tileKey - 1].ToList()); // tile to the left
+                    StuffICanSee.AddRange(tileDict[tileKey + tileYMultiplier].ToList()); // tile above
+                    StuffICanSee.AddRange(tileDict[tileKey - tileYMultiplier].ToList()); // tile below
+                    go.GetComponent<Wolf>().Tick(StuffICanSee);
                 }
             }
         }
@@ -140,7 +153,7 @@ public class Tiling : MonoBehaviour
             newBoid.GetComponent<Renderer>().material.SetColor("_Color", Color.white);
             boidsTemp.Add(newBoid);
         }
-        Debug.Log(boidsTemp);
+       // Debug.Log(boidsTemp);
 
         return boidsTemp;
 
@@ -161,7 +174,7 @@ public class Tiling : MonoBehaviour
             newBoid.GetComponent<Renderer>().material.SetColor("_Color", Color.red);
             boidsTemp.Add(newBoid);
         }
-        Debug.Log(boidsTemp);
+       // Debug.Log(boidsTemp);
 
         return boidsTemp;
 
@@ -174,13 +187,13 @@ public class Tiling : MonoBehaviour
         float3 position2;
         float3 position3;
         float3 position4;
-        for (var x = 0; x < 10; x++)
+        for (var x = 0; x < 20; x++)
         {
             position.x = x;
             position2.x = -x;
             position3.x = x;
             position4.x = -x;
-            for (var y = 0; y < 10; y++)
+            for (var y = 0; y < 20; y++)
             {
 
                 position.y = y;

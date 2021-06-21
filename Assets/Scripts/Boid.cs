@@ -56,15 +56,9 @@ public class Boid : MonoBehaviour
                 Vector3 otherBoidPosition = boid.transform.position;
                 float distToOtherBoid = (transform.position - otherBoidPosition).magnitude;
 
-                // draw rays and change color per boid
-                 /*
-                //  var Colornew;
-                var Colorme = this.GetComponent<Renderer>().material.color;
-                var Colorother = boid.GetComponent<Renderer>().material.color;
+                // draw rays 
+                Debug.DrawRay(transform.position, boid.transform.position - transform.position, Color.white);  // works!!!
 
-                //  Colornew = Colorme - Colorother;
-                Debug.DrawRay(transform.position, boid.transform.position - transform.position, Colorme);  // works!!!
-                 */
 
                 // rules
                 if (distToOtherBoid < radius)
@@ -95,7 +89,7 @@ public class Boid : MonoBehaviour
         }
 
         // TODO: make weights a public var
-        velocity += (average_separation*100) + average_cohesion + average_alignment + boundaryForce;
+        velocity += (average_separation*60) + average_cohesion + average_alignment + boundaryForce;
 
     }
 
