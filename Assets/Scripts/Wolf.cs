@@ -92,6 +92,7 @@ public class Wolf : Boid
             }
             // MoveTowardsTarget
             var directionToEnemy = (target.transform.position - transform.position);
+            Debug.DrawRay(transform.position, directionToEnemy, Color.red);
             velocity += directionToEnemy;
             velocity *= 100;
         }
