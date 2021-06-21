@@ -41,6 +41,8 @@ public class Sheep : Boid
     {
        
         List<Boid> SheepICanSee = new List<Boid>();
+        List<GameObject> GrassICanSee = new List<GameObject>();
+
         // filter Vision
         foreach (var go in Vision)
         {
@@ -50,15 +52,17 @@ public class Sheep : Boid
             }
             if (go.GetComponent<GrassGrowthAgent>())
             {
-                // Destroy(go); // works
-                EatGrass(go);
+                //Destroy(go); // works
+                GrassICanSee.Add(go);
             }
         }
 
         // TODO: add rule: seek food
         // TODO: add rule: flee
-        this.GetComponent<Boid>().BoidMovement(SheepICanSee);
-
+       // this.GetComponent<Boid>().BoidMovement(SheepICanSee);
+        this.GetComponent<Boid>().followBoidRules(SheepICanSee);
+       // this.Hunt(GrassICanSee);
+        this.GetComponent<Boid>().movePosition();
 
 
 
@@ -68,6 +72,27 @@ public class Sheep : Boid
        // Spawn(SheepReproduce);
 
     }
+
+
+    public void Hunt(List<GameObject> targets)
+    {
+        foreach (var target in targets)
+        {
+            // kill sheep
+            double delta = 0.5;
+            if ((transform.position - target.transform.position).magnitude < delta)
+            {
+                Energy += SheepGainFromFood;
+                Destroy(target);
+            }
+            // MoveTowardsTarget
+            var directionToEnemy = (target.transform.position - transform.position);
+            velocity += directionToEnemy;
+            velocity *= 100;
+        }
+
+    }
+
 
     private void EatGrass(GameObject grass)
     {

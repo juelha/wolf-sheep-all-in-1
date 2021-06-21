@@ -8,7 +8,6 @@ using UnityEngine;
 [System.Serializable]
 public class Wolf : Boid
 {
-
     /// <summary>
     ///     Wolf follow boid rules + rule of killing sheep
     ///     If grass is under the sheep, it eats the grass. Otherwise do nothing, this tick.
@@ -16,6 +15,9 @@ public class Wolf : Boid
     /// </summary>
 
     public static Wolf Instance;
+    public List<Wolf> wolfList;
+    public List<Wolf> GetWolfList() { return wolfList; }
+    public void SetWolfList(List<Wolf> wTemp) { wolfList = wTemp; }
     public List<Wolf> wolvesList;
     public List<Wolf> GetWolves() { return wolvesList; }
    // public List<Wolf> List { get; set; }
@@ -31,6 +33,23 @@ public class Wolf : Boid
     public string Type => "Wolf";
     public string Rule { get; private set; }
     public int Energy { get; private set; }
+
+
+    void Awake()
+    {
+        Instance = this;
+        wolvesList.Clear();
+    }
+
+
+    // Start is called before the first frame update <- init
+    void Start()
+    {
+        velocity = this.transform.forward * maxVelocity;
+        Energy = Energy / 2;
+        WolfReproduce = 1;
+        //_grassland.WolfEnvironment.Insert(this);
+    }
 
 
     public void Tick(List<GameObject> Vision)
@@ -59,15 +78,30 @@ public class Wolf : Boid
 
         // TODO: add rule: seek food
         // TODO: add rule: flee
-        this.GetComponent<Boid>().BoidMovement(WolvesICanSee);
+        this.GetComponent<Boid>().followBoidRules(WolvesICanSee);
         this.Hunt(SheepICanSee);
+        this.GetComponent<Boid>().movePosition();
 
 
     }
 
-    private void Hunt(List<GameObject> SheepICanSee)
+
+
+    private void EnergyLoss()
     {
-        foreach (var target in SheepICanSee)
+        Energy -= 2;
+        if (Energy <= 0)
+        {
+           // Destroy(this.GetComponent<Boid>());
+            Debug.Log("died");
+        }
+    }
+
+
+
+    public void Hunt(List<GameObject> targets)
+    {
+        foreach (var target in targets)
         {
             // kill sheep
             double delta = 0.5;
@@ -77,69 +111,14 @@ public class Wolf : Boid
                 Destroy(target);
             }
             // MoveTowardsTarget
-            var directionToEnemy = (transform.position - target.transform.position);
+            var directionToEnemy = (target.transform.position - transform.position);
             velocity += directionToEnemy;
             velocity *= 100;
         }
-        
-    }
-
-    private void EnergyLoss()
-    {
-        Energy -= 2;
-        if (Energy <= 0)
-        {
-            Die();
-           // _grassland.WolfEnvironment.Remove(this);
-        }
-    }
-
-    public void Die()
-    {
-        //  _grassland.SheepEnvironment.Remove(this);
-        //  UnregisterHandle.Invoke(_grassland, this);
-    }
-
-
-    private void RandomMove()
-    {
-      //  var bearing = RandomHelper.Random.Next(360);
-     //   Position = _grassland.WolfEnvironment.MoveTowards(this, bearing, 3);
-    }
-
-    private void Hunt(Sheep sheep)
-    {
-        Vector3 sheepPosition = sheep.transform.position;
-        float targetDistance = (transform.position - sheepPosition).magnitude;
-
-
 
     }
 
-    private void EatSheep(Sheep sheep)
-    {
-        Energy += WolfGainFromFood;
-        sheep.Die();
-    }
 
 
-
-   // public Guid ID { get; set; }
-
-    void Awake()
-    {
-        Instance = this;
-        wolvesList.Clear();
-    }
-
-
-    // Start is called before the first frame update <- init
-    void Start()
-    {
-        velocity = this.transform.forward * maxVelocity;
-        Energy = Energy / 2;
-        WolfReproduce = 1;
-        //_grassland.WolfEnvironment.Insert(this);
-    }
 
 }

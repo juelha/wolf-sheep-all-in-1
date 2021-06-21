@@ -38,13 +38,33 @@ public class Boid : MonoBehaviour
     public void BoidMovement(List<Boid> Vision)
     {
         Debug.Log("TEST");
-        calculateVelocity(Vision);
+        followBoidRules(Vision);
         movePosition();
 
     }
 
+    /*
+    public void Hunt(List<GameObject> targets)
+    {
+        foreach (var target in targets)
+        {
+            // kill sheep
+            double delta = 0.5;
+            if ((transform.position - target.transform.position).magnitude < delta)
+            {
+                Energy += GainFromFood;
+                Destroy(target);
+            }
+            // MoveTowardsTarget
+            var directionToEnemy = (transform.position - target.transform.position);
+            velocity += directionToEnemy;
+            velocity *= 100;
+        }
 
-    void calculateVelocity(List<Boid> Vision)
+    }
+    */
+
+    public void followBoidRules(List<Boid> Vision)
     {
         // init
         var average_alignment = Vector3.zero;
@@ -122,7 +142,7 @@ public class Boid : MonoBehaviour
     }
 
 
-    void movePosition()
+    public void movePosition()
     {
         // limit velocity 
         if (velocity.magnitude > maxVelocity)
