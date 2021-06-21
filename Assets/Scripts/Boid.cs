@@ -3,81 +3,47 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq; // to use .Where
 
+/// <summary>
+///     MICROLEVEL(what can the agent see and do)
+///     Parentclass to Sheep and Wolf
+/// </summary>
 
 [System.Serializable]
 public class Boid : MonoBehaviour
 {
-    // private BoidSpawner spawner;
-    public static Boid BoidInstance;
-
-    // public Vector3 pos; // prob dont need
     public Vector3 velocity;
     public float maxVelocity;
 
     public float separationRadius;
     public float radius;
 
-
     private Boid boid;
-    // public List<Boid> Vision;
 
-    void Awake()
-    {
-        BoidInstance = this;
-        boid = Boid.BoidInstance;
-        // boids.Clear();
-    }
 
+    // Init -------------------------------------------------------------------------
     // Start is called before the first frame update
     void Start()
     {
         velocity = this.transform.forward * maxVelocity; 
     }
 
-    // Update is called once per frame
+
+    // Update -----------------------------------------------------------------------
     public void BoidMovement(List<Boid> Vision)
     {
-        Debug.Log("TEST");
         followBoidRules(Vision);
         movePosition();
-
     }
 
-    /*
-    public void Hunt(List<GameObject> targets)
-    {
-        foreach (var target in targets)
-        {
-            // kill sheep
-            double delta = 0.5;
-            if ((transform.position - target.transform.position).magnitude < delta)
-            {
-                Energy += GainFromFood;
-                Destroy(target);
-            }
-            // MoveTowardsTarget
-            var directionToEnemy = (transform.position - target.transform.position);
-            velocity += directionToEnemy;
-            velocity *= 100;
-        }
 
-    }
-    */
-
+    // Methods ----------------------------------------------------------------------
     public void followBoidRules(List<Boid> Vision)
     {
         // init
-        var average_alignment = Vector3.zero;
-        var average_cohesion = Vector3.zero;
-        var average_separation = Vector3.zero;
+        Vector3 average_separation = Vector3.zero;
+        Vector3 average_cohesion = Vector3.zero;
+        Vector3 average_alignment = Vector3.zero;
 
-        Vector3 seperationSum = Vector3.zero;
-        Vector3 positionSum = Vector3.zero;
-        Vector3 headingSum = Vector3.zero;
-
-        Vector3 separationForce = Vector3.zero;
-        Vector3 cohesionForce = Vector3.zero;
-        Vector3 alignmentForce = Vector3.zero;
         Vector3 boundaryForce = Vector3.zero;
 
         int boidsNearby = 0;
@@ -103,27 +69,19 @@ public class Boid : MonoBehaviour
                 // rules
                 if (distToOtherBoid < radius)
                 {
-
-                    seperationSum += -(otherBoidPosition - transform.position) * (1f / Mathf.Max(distToOtherBoid, .0001f));  // other radius?
-                    positionSum += otherBoidPosition; // diff?
-                    headingSum += boid.transform.forward; //average_alignment += boid.velocity;
+                    average_separation += -(otherBoidPosition - transform.position) * (1f / Mathf.Max(distToOtherBoid, .0001f));  // other radius?
+                    average_cohesion += otherBoidPosition; // diff?
+                    average_alignment += boid.transform.forward; 
 
                     boidsNearby++;
                 }
 
                 if (boidsNearby > 0)
                 {
-                    separationForce = seperationSum / boidsNearby;
-                    cohesionForce = (positionSum / boidsNearby) - transform.position;
-                    alignmentForce = headingSum / boidsNearby;
+                    average_separation /= boidsNearby;
+                    average_cohesion = (average_cohesion / boidsNearby) - transform.position;
+                    average_alignment /= boidsNearby;
                 }
-                else
-                {
-                    separationForce = Vector3.zero;
-                    cohesionForce = Vector3.zero;
-                    alignmentForce = Vector3.zero;
-                }
-
 
             }
         }
@@ -136,8 +94,8 @@ public class Boid : MonoBehaviour
             // boundaryForce *= boundaryWeight; 
         }
 
-
-        velocity += separationForce + cohesionForce + alignmentForce + boundaryForce;
+        // TODO: make weights a public var
+        velocity += (average_separation*100) + average_cohesion + average_alignment + boundaryForce;
 
     }
 
@@ -156,14 +114,8 @@ public class Boid : MonoBehaviour
         this.transform.position = pos;
 
         this.transform.position += velocity * Time.deltaTime; // move 10 units every sec
-        this.transform.up = velocity;
-        //this.transform.rotation = Quaternion.LookRotation(velocity); // look in direction its going 
-
-
-
+        this.transform.up = velocity; // boid looks into direction its heading
     }
-
-
 
 }
 

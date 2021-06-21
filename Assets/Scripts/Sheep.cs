@@ -4,45 +4,49 @@ using UnityEngine;
 using System.Linq;
 
 
+/// <summary>
+///     MICROLEVEL(what can the agent see and do)
+///     Sheep move according to Boid Rules (see Boid.cs)
+///     If grass is under the sheep, it eats the grass. Otherwise do nothing, this tick.
+///     Every few rounds a new sheep is spawned, which receives half of the energy  
+/// </summary>
+
 [System.Serializable]
 public class Sheep : Boid
 {
 
-    /// <summary>
-    ///     Sheep move according to Boid Rules (see Boid.cs)
-    ///     If grass is under the sheep, it eats the grass. Otherwise do nothing, this tick.
-    ///     Every few rounds a new sheep is spawned, which receives half of the energy  
-    /// </summary>
-
-
-
     public static Sheep Instance;
-    public List<Sheep> sheepList;
-    public List<Sheep> GetSheepList() { return sheepList; }
-    public void SetSheepList(List<Sheep> sheepTemp) { sheepList = sheepTemp; }
-    //public List<Sheep> sheepList { get; set; }
 
     public int SheepGainFromFood { get; set; }
-
     public int SheepReproduce { get; set; }
-
-
-  // private GrasslandLayer _grassland;
-
-   // public Position Position { get; set; }
 
     public string Type => "Sheep";
     public string Rule { get; private set; }
     public int Energy { get; private set; }
 
 
+    // Init -------------------------------------------------------------------------
+    void Awake()
+    {
+        Instance = this;
+    }
 
+    // Start is called before the first frame update
+    void Start()
+    {
+        Energy = Energy / 2;
+        SheepReproduce = 1;
+    }
+
+
+    // Update------------------------------------------------------------------------
     public void Tick(List<GameObject> Vision)
     {
-       
+        EnergyLoss();
+        // Spawn(SheepReproduce);
+
         List<Boid> SheepICanSee = new List<Boid>();
         List<GameObject> GrassICanSee = new List<GameObject>();
-
         // filter Vision
         foreach (var go in Vision)
         {
@@ -53,6 +57,7 @@ public class Sheep : Boid
             if (go.GetComponent<GrassGrowthAgent>())
             {
                 //Destroy(go); // works
+                EatGrass(go);
                 GrassICanSee.Add(go);
             }
         }
@@ -65,14 +70,20 @@ public class Sheep : Boid
         this.GetComponent<Boid>().movePosition();
 
 
-
-
-        EnergyLoss();
-       // SheepReproduce = 2;
-       // Spawn(SheepReproduce);
-
     }
 
+
+    // Methods-----------------------------------------------------------------------
+
+    private void EnergyLoss()
+    {
+        Energy -= 2;
+        if (Energy <= 0)
+        {
+            // Destroy(this.GetComponent<GameObject>());
+            Debug.Log("died");
+        }
+    }
 
     public void Hunt(List<GameObject> targets)
     {
@@ -93,7 +104,6 @@ public class Sheep : Boid
 
     }
 
-
     private void EatGrass(GameObject grass)
     {
         double delta = 0.5;
@@ -104,44 +114,7 @@ public class Sheep : Boid
         }
     }
 
-    private void EnergyLoss()
-    {
-        Energy -= 2;
-        if (Energy <= 0)
-        {
-            Die();
-        }
-    }
 
 
-
-    public void Die()
-    {
-        
-      //  _grassland.SheepEnvironment.Remove(this);
-      //  UnregisterHandle.Invoke(_grassland, this);
-    }
-
-   // public Guid ID { get; set; }
-
-    //------------------------------------------------------------------------------------------
-
-    void Awake()
-    {
-        Instance = this;
-        sheepList.Clear();
-
-        // boids.Clear();
-    }
-
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        //Spawn(60);
-        //velocity = this.transform.forward * maxVelocity;
-        Energy /= 2;
-
-    }
 
 }
