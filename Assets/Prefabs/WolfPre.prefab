@@ -49,8 +49,6 @@ MonoBehaviour:
   maxVelocity: 2
   separationRadius: 0
   radius: 5
-  wolfList: []
-  wolvesList: []
 --- !u!33 &3189965191856866222
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -78,7 +76,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 67684d8d4e5cbbd4ea87f09a2f31e68f, type: 2}
+  - {fileID: 2100000, guid: ed613454a55b4654794525a726abf764, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

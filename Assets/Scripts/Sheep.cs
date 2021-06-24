@@ -62,8 +62,8 @@ public class Sheep : Boid
             if (go.GetComponent<GrassGrowthAgent>())
             {
                 //Destroy(go); // works
-                //EatGrass(go);
-                GrassICanSee.Add(go);
+                EatGrass(go);
+               // GrassICanSee.Add(go);
             }
             
 
@@ -73,7 +73,7 @@ public class Sheep : Boid
         // TODO: add rule: flee
         // this.GetComponent<Boid>().BoidMovement(SheepICanSee);
         this.GetComponent<Boid>().followBoidRules(SheepICanSee);
-        this.Hunt(GrassICanSee);
+       // this.Hunt(GrassICanSee);
         this.Flee(WolvesICanSee);
         this.GetComponent<Boid>().movePosition();
 

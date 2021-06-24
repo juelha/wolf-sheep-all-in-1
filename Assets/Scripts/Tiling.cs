@@ -120,9 +120,26 @@ public class Tiling : MonoBehaviour
                         StuffICanSee.AddRange(tileDict[tileKey - tileYMultiplier].ToList()); // tile below
                     }
 
-                    
-                    
-                    
+                    if (tileDict.ContainsKey(tileKey + 1 + tileYMultiplier))
+                    {
+                        StuffICanSee.AddRange(tileDict[tileKey + 1 + tileYMultiplier].ToList()); // tile top right
+                    }
+                    if (tileDict.ContainsKey(tileKey - 1 + tileYMultiplier))
+                    {
+                        StuffICanSee.AddRange(tileDict[tileKey - 1 + tileYMultiplier].ToList()); // tile top left
+                    }
+
+                    if (tileDict.ContainsKey(tileKey + 1 - tileYMultiplier))
+                    {
+                        StuffICanSee.AddRange(tileDict[tileKey + 1 - tileYMultiplier].ToList()); // tile bot right
+                    }
+                    if (tileDict.ContainsKey(tileKey - 1 - tileYMultiplier))
+                    {
+                        StuffICanSee.AddRange(tileDict[tileKey - 1 - tileYMultiplier].ToList()); // tile below
+                    }
+
+
+
                     go.GetComponent<Sheep>().Tick(StuffICanSee);
                 }
                 // wolf
@@ -147,6 +164,24 @@ public class Tiling : MonoBehaviour
                     if (tileDict.ContainsKey(tileKey - tileYMultiplier))
                     {
                         StuffICanSee.AddRange(tileDict[tileKey - tileYMultiplier].ToList()); // tile below
+                    }
+
+                    if (tileDict.ContainsKey(tileKey + 1 + tileYMultiplier))
+                    {
+                        StuffICanSee.AddRange(tileDict[tileKey + 1 + tileYMultiplier].ToList()); // tile top right
+                    }
+                    if (tileDict.ContainsKey(tileKey - 1 + tileYMultiplier))
+                    {
+                        StuffICanSee.AddRange(tileDict[tileKey - 1 + tileYMultiplier].ToList()); // tile top left
+                    }
+
+                    if (tileDict.ContainsKey(tileKey + 1 - tileYMultiplier))
+                    {
+                        StuffICanSee.AddRange(tileDict[tileKey + 1 - tileYMultiplier].ToList()); // tile bot right
+                    }
+                    if (tileDict.ContainsKey(tileKey - 1 - tileYMultiplier))
+                    {
+                        StuffICanSee.AddRange(tileDict[tileKey - 1 - tileYMultiplier].ToList()); // tile below
                     }
                     go.GetComponent<Wolf>().Tick(StuffICanSee);
                 }
@@ -194,6 +229,7 @@ public class Tiling : MonoBehaviour
     {
         var radius = 5;
         List<Wolf> boidsTemp = new List<Wolf>();
+        Color newColor = new Color(114, 112, 114,1);
 
         for (int i = 0; i < percent / 10; i++)
         {
@@ -202,7 +238,6 @@ public class Tiling : MonoBehaviour
             Quaternion rot = UnityEngine.Random.rotation;
 
             Wolf newBoid = Instantiate(prefab, pos, rot).GetComponent<Wolf>();
-            newBoid.GetComponent<Renderer>().material.SetColor("_Color", Color.red);
             boidsTemp.Add(newBoid);
         }
        // Debug.Log(boidsTemp);
@@ -215,12 +250,13 @@ public class Tiling : MonoBehaviour
     {
         List<GrassGrowthAgent> boidsTemp = new List<GrassGrowthAgent>();
         var radius = 20;
+        Color newColor = new Color(79, 178, 134, 1);
         for (int i = 0; i < percent *20/ 2.5; i++)
         {
             Vector3 pos = this.transform.position + UnityEngine.Random.insideUnitSphere * radius;
             pos.z = 0;
             GrassGrowthAgent newBoid = Instantiate(prefab, pos, Quaternion.identity).GetComponent<GrassGrowthAgent>();
-            newBoid.GetComponent<Renderer>().material.SetColor("_Color", Color.green);
+         //   newBoid.GetComponent<Renderer>().material.SetColor("_Color", Color.green);
             boidsTemp.Add(newBoid);
         }
         return boidsTemp;
