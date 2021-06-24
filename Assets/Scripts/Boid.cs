@@ -89,24 +89,32 @@ public class Boid : MonoBehaviour
         }
 
         // TODO: make weights a public var
-        velocity += (average_separation*60) + average_cohesion + average_alignment + boundaryForce;
+        velocity += (average_separation*50) + average_cohesion + average_alignment + boundaryForce;
 
     }
 
 
     public void movePosition()
     {
+        maxVelocity = 2;
         // limit velocity 
+        Debug.Log("velocity.magnitude");
+        Debug.Log(velocity.magnitude);
         if (velocity.magnitude > maxVelocity)
         {
+            Debug.Log("fuck.magnitude");
             velocity = velocity.normalized * maxVelocity;
         }
+        Debug.Log("velocity.magnitude");
+        Debug.Log(velocity.magnitude);
 
         // dont move along z axis
         Vector3 pos = this.transform.position;
         pos.z = 0;
         this.transform.position = pos;
 
+       // Debug.Log(this.transform.position);
+       // Debug.Log(velocity);
         this.transform.position += velocity * Time.deltaTime; // move 10 units every sec
         this.transform.up = velocity; // boid looks into direction its heading
     }

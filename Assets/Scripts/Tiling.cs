@@ -36,7 +36,7 @@ public class Tiling : MonoBehaviour
 
         SpawnSheep(prefab, 90);
         SpawnWolves(prefabwolf, 10);
-        Grow(prefabgrass);
+        Grow(prefabgrass,90);
 
     }
 
@@ -211,49 +211,15 @@ public class Tiling : MonoBehaviour
 
     }
 
-    public static List<Vector3> LoopOverPos()
-    {
-        List<Vector3> TilesList = new List<Vector3>();
-        float3 position;
-        float3 position2;
-        float3 position3;
-        float3 position4;
-        for (var x = 0; x < 20; x++)
-        {
-            position.x = x;
-            position2.x = -x;
-            position3.x = x;
-            position4.x = -x;
-            for (var y = 0; y < 20; y++)
-            {
-
-                position.y = y;
-                position2.y = y;
-                position3.y = -y;
-                position4.y = -y;
-
-                position.z = 0;
-                position2.z = 0;
-                position3.z = 0;
-                position4.z = 0;
-
-                TilesList.Add(position);
-                TilesList.Add(position2);
-                TilesList.Add(position3);
-                TilesList.Add(position4);
-            }
-        }
-        return TilesList;
-    }
-
-
-    public List<GrassGrowthAgent> Grow(GameObject prefab) // Spaw grass quadrant
+    public List<GrassGrowthAgent> Grow(GameObject prefab, int percent) // Spaw grass quadrant
     {
         List<GrassGrowthAgent> boidsTemp = new List<GrassGrowthAgent>();
-        var posList = Tiling.LoopOverPos();
-        foreach (var posL in posList)
+        var radius = 20;
+        for (int i = 0; i < percent *20/ 2.5; i++)
         {
-            GrassGrowthAgent newBoid = Instantiate(prefab, posL, Quaternion.identity).GetComponent<GrassGrowthAgent>();
+            Vector3 pos = this.transform.position + UnityEngine.Random.insideUnitSphere * radius;
+            pos.z = 0;
+            GrassGrowthAgent newBoid = Instantiate(prefab, pos, Quaternion.identity).GetComponent<GrassGrowthAgent>();
             newBoid.GetComponent<Renderer>().material.SetColor("_Color", Color.green);
             boidsTemp.Add(newBoid);
         }

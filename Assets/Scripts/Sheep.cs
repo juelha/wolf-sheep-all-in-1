@@ -62,7 +62,7 @@ public class Sheep : Boid
             if (go.GetComponent<GrassGrowthAgent>())
             {
                 //Destroy(go); // works
-                EatGrass(go);
+                //EatGrass(go);
                 GrassICanSee.Add(go);
             }
             
@@ -73,7 +73,7 @@ public class Sheep : Boid
         // TODO: add rule: flee
         // this.GetComponent<Boid>().BoidMovement(SheepICanSee);
         this.GetComponent<Boid>().followBoidRules(SheepICanSee);
-        // this.Hunt(GrassICanSee);
+        this.Hunt(GrassICanSee);
         this.Flee(WolvesICanSee);
         this.GetComponent<Boid>().movePosition();
 
@@ -95,19 +95,19 @@ public class Sheep : Boid
 
     public void Hunt(List<GameObject> targets)
     {
-        foreach (var target in targets)
+        for (int i = 0; i < 1; i++)
         {
             // kill sheep
             double delta = 0.5;
-            if ((transform.position - target.transform.position).magnitude < delta)
+            if ((transform.position - targets[i].transform.position).magnitude < delta)
             {
                 Energy += SheepGainFromFood;
-                Destroy(target);
+                Destroy(targets[i]);
             }
             // MoveTowardsTarget
-            var directionToEnemy = (target.transform.position - transform.position);
+            var directionToEnemy = (targets[i].transform.position - transform.position);
             velocity += directionToEnemy;
-            velocity *= 100;
+            //velocity *= 100;
         }
 
     }
@@ -119,7 +119,7 @@ public class Sheep : Boid
             
             // MoveTowardsTarget negated 
             var directionToBadguy = (transform.position - badguy.transform.position);
-            Debug.DrawRay(transform.position, directionToBadguy, Color.red);
+            //Debug.DrawRay(transform.position, directionToBadguy, Color.red);
             velocity += directionToBadguy;
             velocity *= 100; 
         }
