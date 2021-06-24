@@ -47,9 +47,14 @@ public class Sheep : Boid
 
         List<Boid> SheepICanSee = new List<Boid>();
         List<GameObject> GrassICanSee = new List<GameObject>();
+        List<GameObject> WolvesICanSee = new List<GameObject>();
         // filter Vision
         foreach (var go in Vision)
         {
+            if (go.GetComponent<Wolf>())
+            {
+                WolvesICanSee.Add(go);
+            }
             if (go.GetComponent<Sheep>())
             {
                 SheepICanSee.Add(go.GetComponent<Boid>());
@@ -60,13 +65,16 @@ public class Sheep : Boid
                 EatGrass(go);
                 GrassICanSee.Add(go);
             }
+            
+
         }
 
         // TODO: add rule: seek food
         // TODO: add rule: flee
-       // this.GetComponent<Boid>().BoidMovement(SheepICanSee);
+        // this.GetComponent<Boid>().BoidMovement(SheepICanSee);
         this.GetComponent<Boid>().followBoidRules(SheepICanSee);
-       // this.Hunt(GrassICanSee);
+        // this.Hunt(GrassICanSee);
+        this.Flee(WolvesICanSee);
         this.GetComponent<Boid>().movePosition();
 
 
@@ -100,6 +108,20 @@ public class Sheep : Boid
             var directionToEnemy = (target.transform.position - transform.position);
             velocity += directionToEnemy;
             velocity *= 100;
+        }
+
+    }
+
+    public void Flee(List<GameObject> badguys)
+    {
+        foreach (var badguy in badguys)
+        {
+            
+            // MoveTowardsTarget negated 
+            var directionToBadguy = (transform.position - badguy.transform.position);
+            Debug.DrawRay(transform.position, directionToBadguy, Color.red);
+            velocity += directionToBadguy;
+            velocity *= 100; 
         }
 
     }

@@ -102,21 +102,52 @@ public class Tiling : MonoBehaviour
                 {
                     // get own tile and adjacent tiles -> cross style (diagonal adjacent tiles are not covered) <- TODO!!
                     StuffICanSee.AddRange(tileDict[tileKey].ToList()); // own 
-                    StuffICanSee.AddRange(tileDict[tileKey+1].ToList()); // tile to the right
-                    StuffICanSee.AddRange(tileDict[tileKey-1].ToList()); // tile to the left
-                    StuffICanSee.AddRange(tileDict[tileKey+tileYMultiplier].ToList()); // tile above
-                    StuffICanSee.AddRange(tileDict[tileKey-tileYMultiplier].ToList()); // tile below
+                    // if adjacent tiles exist at all:
+                    if (tileDict.ContainsKey(tileKey + 1))
+                    {
+                        StuffICanSee.AddRange(tileDict[tileKey + 1].ToList()); // tile to the right
+                    }
+                    if (tileDict.ContainsKey(tileKey - 1))
+                    {
+                        StuffICanSee.AddRange(tileDict[tileKey - 1].ToList()); // tile to the left
+                    }
+                    if (tileDict.ContainsKey(tileKey + tileYMultiplier))
+                    {
+                        StuffICanSee.AddRange(tileDict[tileKey + tileYMultiplier].ToList()); // tile above
+                    }
+                    if (tileDict.ContainsKey(tileKey - tileYMultiplier))
+                    {
+                        StuffICanSee.AddRange(tileDict[tileKey - tileYMultiplier].ToList()); // tile below
+                    }
+
+                    
+                    
+                    
                     go.GetComponent<Sheep>().Tick(StuffICanSee);
                 }
                 // wolf
                 // get List of what Wolf can see and call update (hier -> tick()) MANUALLY
                 if (go.GetComponent<Wolf>())
                 {
+                    // get own tile and adjacent tiles -> cross style (diagonal adjacent tiles are not covered) <- TODO!!
                     StuffICanSee.AddRange(tileDict[tileKey].ToList()); // own 
-                    StuffICanSee.AddRange(tileDict[tileKey + 1].ToList()); // tile to the right
-                    StuffICanSee.AddRange(tileDict[tileKey - 1].ToList()); // tile to the left
-                    StuffICanSee.AddRange(tileDict[tileKey + tileYMultiplier].ToList()); // tile above
-                    StuffICanSee.AddRange(tileDict[tileKey - tileYMultiplier].ToList()); // tile below
+                    // if adjacent tiles exist at all:
+                    if (tileDict.ContainsKey(tileKey + 1))
+                    {
+                        StuffICanSee.AddRange(tileDict[tileKey + 1].ToList()); // tile to the right
+                    }
+                    if (tileDict.ContainsKey(tileKey - 1))
+                    {
+                        StuffICanSee.AddRange(tileDict[tileKey - 1].ToList()); // tile to the left
+                    }
+                    if (tileDict.ContainsKey(tileKey + tileYMultiplier))
+                    {
+                        StuffICanSee.AddRange(tileDict[tileKey + tileYMultiplier].ToList()); // tile above
+                    }
+                    if (tileDict.ContainsKey(tileKey - tileYMultiplier))
+                    {
+                        StuffICanSee.AddRange(tileDict[tileKey - tileYMultiplier].ToList()); // tile below
+                    }
                     go.GetComponent<Wolf>().Tick(StuffICanSee);
                 }
             }
