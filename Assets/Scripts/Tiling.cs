@@ -35,7 +35,7 @@ public class Tiling : MonoBehaviour
         grassInst = GrassGrowthAgent.Instance;
 
         SpawnSheep(prefab, 90);
-        SpawnWolves(prefabwolf, 10);
+        SpawnWolves(prefabwolf, 20);
         Grow(prefabgrass,90);
 
     }
@@ -87,6 +87,23 @@ public class Tiling : MonoBehaviour
         }
     }
 
+    private List<GameObject> getStuffICanSee(int tileKey)
+    {
+        List<GameObject> StuffICanSee = new List<GameObject>();
+
+        for (int i = -1; i < 2; i++)
+        {
+            for (int j = -1; j < 2; j++)
+            {
+                if (tileDict.ContainsKey(tileKey + i + tileYMultiplier * j))
+                {
+                    StuffICanSee.AddRange(tileDict[tileKey + i + tileYMultiplier * j].ToList()); // tile to the right
+                }
+            }
+        }
+        return StuffICanSee;
+    }
+
     // looping through tiles and activating update of agents
     public void loopOverTiles()
     {
@@ -94,96 +111,17 @@ public class Tiling : MonoBehaviour
         {
             foreach (var go in tileDict[tileKey])
             {
-                List<GameObject> StuffICanSee = new List<GameObject>();
-
                 // sheep
                 // get List of what Sheep can see and call update (hier -> tick()) 
                 if (go.GetComponent<Sheep>())
                 {
-                    // get own tile and adjacent tiles -> cross style (diagonal adjacent tiles are not covered) <- TODO!!
-                    StuffICanSee.AddRange(tileDict[tileKey].ToList()); // own 
-                    // if adjacent tiles exist at all:
-                    if (tileDict.ContainsKey(tileKey + 1))
-                    {
-                        StuffICanSee.AddRange(tileDict[tileKey + 1].ToList()); // tile to the right
-                    }
-                    if (tileDict.ContainsKey(tileKey - 1))
-                    {
-                        StuffICanSee.AddRange(tileDict[tileKey - 1].ToList()); // tile to the left
-                    }
-                    if (tileDict.ContainsKey(tileKey + tileYMultiplier))
-                    {
-                        StuffICanSee.AddRange(tileDict[tileKey + tileYMultiplier].ToList()); // tile above
-                    }
-                    if (tileDict.ContainsKey(tileKey - tileYMultiplier))
-                    {
-                        StuffICanSee.AddRange(tileDict[tileKey - tileYMultiplier].ToList()); // tile below
-                    }
-
-                    if (tileDict.ContainsKey(tileKey + 1 + tileYMultiplier))
-                    {
-                        StuffICanSee.AddRange(tileDict[tileKey + 1 + tileYMultiplier].ToList()); // tile top right
-                    }
-                    if (tileDict.ContainsKey(tileKey - 1 + tileYMultiplier))
-                    {
-                        StuffICanSee.AddRange(tileDict[tileKey - 1 + tileYMultiplier].ToList()); // tile top left
-                    }
-
-                    if (tileDict.ContainsKey(tileKey + 1 - tileYMultiplier))
-                    {
-                        StuffICanSee.AddRange(tileDict[tileKey + 1 - tileYMultiplier].ToList()); // tile bot right
-                    }
-                    if (tileDict.ContainsKey(tileKey - 1 - tileYMultiplier))
-                    {
-                        StuffICanSee.AddRange(tileDict[tileKey - 1 - tileYMultiplier].ToList()); // tile below
-                    }
-
-
-
-                    go.GetComponent<Sheep>().Tick(StuffICanSee);
+                    go.GetComponent<Sheep>().Tick(getStuffICanSee(tileKey));
                 }
                 // wolf
                 // get List of what Wolf can see and call update (hier -> tick()) MANUALLY
                 if (go.GetComponent<Wolf>())
                 {
-                    // get own tile and adjacent tiles -> cross style (diagonal adjacent tiles are not covered) <- TODO!!
-                    StuffICanSee.AddRange(tileDict[tileKey].ToList()); // own 
-                    // if adjacent tiles exist at all:
-                    if (tileDict.ContainsKey(tileKey + 1))
-                    {
-                        StuffICanSee.AddRange(tileDict[tileKey + 1].ToList()); // tile to the right
-                    }
-                    if (tileDict.ContainsKey(tileKey - 1))
-                    {
-                        StuffICanSee.AddRange(tileDict[tileKey - 1].ToList()); // tile to the left
-                    }
-                    if (tileDict.ContainsKey(tileKey + tileYMultiplier))
-                    {
-                        StuffICanSee.AddRange(tileDict[tileKey + tileYMultiplier].ToList()); // tile above
-                    }
-                    if (tileDict.ContainsKey(tileKey - tileYMultiplier))
-                    {
-                        StuffICanSee.AddRange(tileDict[tileKey - tileYMultiplier].ToList()); // tile below
-                    }
-
-                    if (tileDict.ContainsKey(tileKey + 1 + tileYMultiplier))
-                    {
-                        StuffICanSee.AddRange(tileDict[tileKey + 1 + tileYMultiplier].ToList()); // tile top right
-                    }
-                    if (tileDict.ContainsKey(tileKey - 1 + tileYMultiplier))
-                    {
-                        StuffICanSee.AddRange(tileDict[tileKey - 1 + tileYMultiplier].ToList()); // tile top left
-                    }
-
-                    if (tileDict.ContainsKey(tileKey + 1 - tileYMultiplier))
-                    {
-                        StuffICanSee.AddRange(tileDict[tileKey + 1 - tileYMultiplier].ToList()); // tile bot right
-                    }
-                    if (tileDict.ContainsKey(tileKey - 1 - tileYMultiplier))
-                    {
-                        StuffICanSee.AddRange(tileDict[tileKey - 1 - tileYMultiplier].ToList()); // tile below
-                    }
-                    go.GetComponent<Wolf>().Tick(StuffICanSee);
+                    go.GetComponent<Wolf>().Tick(getStuffICanSee(tileKey));
                 }
             }
         }
@@ -236,7 +174,7 @@ public class Tiling : MonoBehaviour
 
             Vector3 pos = this.transform.position + UnityEngine.Random.insideUnitSphere * radius;
             Quaternion rot = UnityEngine.Random.rotation;
-
+            //pos.x = -(2*radius);
             Wolf newBoid = Instantiate(prefab, pos, rot).GetComponent<Wolf>();
             boidsTemp.Add(newBoid);
         }

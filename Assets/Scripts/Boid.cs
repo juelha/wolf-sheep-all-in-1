@@ -57,7 +57,7 @@ public class Boid : MonoBehaviour
                 float distToOtherBoid = (transform.position - otherBoidPosition).magnitude;
 
                 // draw rays 
-                Debug.DrawRay(transform.position, boid.transform.position - transform.position, Color.white);  // works!!!
+               // Debug.DrawRay(transform.position, boid.transform.position - transform.position, Color.white);  // works!!!
 
 
                 // rules
@@ -98,15 +98,11 @@ public class Boid : MonoBehaviour
     {
         maxVelocity = 2;
         // limit velocity 
-        Debug.Log("velocity.magnitude");
-        Debug.Log(velocity.magnitude);
         if (velocity.magnitude > maxVelocity)
         {
-            Debug.Log("fuck.magnitude");
             velocity = velocity.normalized * maxVelocity;
         }
-        Debug.Log("velocity.magnitude");
-        Debug.Log(velocity.magnitude);
+
 
         // dont move along z axis
         Vector3 pos = this.transform.position;
